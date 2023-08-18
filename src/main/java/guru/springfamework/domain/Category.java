@@ -1,9 +1,6 @@
 package guru.springfamework.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,11 +10,14 @@ import javax.persistence.Id;
 /**
  * Created by jt on 9/24/17.
  */
-@Data
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
+@Getter
+@Setter
+@EqualsAndHashCode
 public class Category {
 
     @Id
