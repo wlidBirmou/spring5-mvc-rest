@@ -67,4 +67,12 @@ public class CustomerServiceImp implements CustomerService{
         }).orElse(null);
 
     }
+
+    @Override
+    public boolean deleteCustomer(Long id) {
+        if(this.customerRepository.existsById(id)) {
+            this.customerRepository.deleteById(id);
+            return true;
+        } else return false;
+    }
 }

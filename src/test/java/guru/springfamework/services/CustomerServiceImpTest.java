@@ -165,4 +165,23 @@ class CustomerServiceImpTest {
         verify(this.customerRepository,times(1)).findById(anyLong());
         verify(this.customerRepository,times(0)).save(any());
     }
+
+    @Test
+    void deleteExistingCustomer(){
+        Customer customer=Customer.builder().id(1l).firstName("Abderrahim").lastName("LAAKAB").build();
+        when(this.customerRepository.existsById(anyLong())).thenReturn(true);
+        boolean result=this.customerService.deleteCustomer(1l);
+        assertTrue(result);
+        verify(this.customerRepository,times(1)).existsById(anyLong());
+        verify(this.customerRepository,times(1)).deleteById(anyLong());
+    }
+
+    @Test
+    void deleteNonExistingCustomer(){
+        Customer customer=Customer.builder().id(1l).firstName("Abderrahim").lastName("LAAKAB").build();
+        when(this.customerRepository.existsById(anyLong())).thenReturn(false);
+        boolean result=this.customerService.deleteCustomer(1l);
+        assertFalse(result);
+        verify(this.customerRepository,times(1)).existsById(anyLong());
+    }
 }

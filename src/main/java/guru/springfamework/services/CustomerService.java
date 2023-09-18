@@ -10,6 +10,7 @@ public interface CustomerService {
     public CustomerDTO createNewCustomer(CustomerDTO customerDTO);
     public CustomerDTO updateCustomer(Long id, CustomerDTO customerDTO);
     public CustomerDTO patchCustomer(Long id, CustomerDTO customerDTO);
+    public boolean deleteCustomer(Long id);
 
 
 }

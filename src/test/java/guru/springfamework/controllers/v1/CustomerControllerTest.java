@@ -128,4 +128,25 @@ class CustomerControllerTest extends AbstractRestControllerTest{
                 .andExpect(status().isNoContent());
         verify(this.customerService,times(1)).patchCustomer(anyLong(),any(CustomerDTO.class));
     }
+
+
+    @Test
+    void deletingExistingCustomer() throws Exception{
+
+        when(this.customerService.deleteCustomer(anyLong())).thenReturn(true);
+        this.mockMvc.perform(delete("/api/v1/customers/1").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        verify(this.customerService,times(1)).deleteCustomer(anyLong());
+    }
+
+    @Test
+    void deletingNonExistingCustomer() throws Exception{
+        when(this.customerService.deleteCustomer(anyLong())).thenReturn(false);
+        this.mockMvc.perform(delete("/api/v1/customers/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+        verify(this.customerService,times(1)).deleteCustomer(anyLong());
+    }
 }

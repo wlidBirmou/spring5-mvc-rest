@@ -53,10 +53,16 @@ public class CustomerController  {
 
     @PatchMapping("/{id}")
     public ResponseEntity<CustomerDTO> patchCustomer(@PathVariable long id, @RequestBody CustomerDTO customerDTO){
-        log.debug("inside patch method");
         CustomerDTO resultDTO=this.customerService.patchCustomer(id,customerDTO);
         if(resultDTO==null) return new ResponseEntity<>(customerDTO,HttpStatus.NO_CONTENT);
         else return  new ResponseEntity<>(resultDTO,HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCustomer(@PathVariable long id){
+        boolean isOk=this.customerService.deleteCustomer(id);
+        if(isOk) return new ResponseEntity<>(HttpStatus.OK);
+        else return  new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }
