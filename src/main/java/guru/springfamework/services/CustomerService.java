@@ -9,4 +9,7 @@ public interface CustomerService {
     public CustomerDTO getCustomerById(Long id);
     public CustomerDTO createNewCustomer(CustomerDTO customerDTO);
     public CustomerDTO updateCustomer(Long id, CustomerDTO customerDTO);
+    public CustomerDTO patchCustomer(Long id, CustomerDTO customerDTO);
+
+
 }

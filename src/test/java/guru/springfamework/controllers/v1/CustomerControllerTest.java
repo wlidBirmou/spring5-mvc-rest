@@ -1,6 +1,7 @@
 package guru.springfamework.controllers.v1;
 
 import guru.springfamework.api.v1.model.CustomerDTO;
+import guru.springfamework.domain.Customer;
 import guru.springfamework.services.CustomerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -98,4 +99,33 @@ class CustomerControllerTest extends AbstractRestControllerTest{
         verify(this.customerService,times(1)).updateCustomer(anyLong(),any(CustomerDTO.class));
     }
 
+    @Test
+    void patchExistingCustomer() throws Exception{
+        final String FIRST_NAME="Said";
+        final String LAST_NAME="MOUHOUNE";
+        CustomerDTO returnCustomerDTO= CustomerDTO.builder().id(1l).firstName(FIRST_NAME).lastName(LAST_NAME).build();
+        CustomerDTO customerDTO= CustomerDTO.builder().firstName(FIRST_NAME).build();
+        when(this.customerService.patchCustomer(anyLong(),any(CustomerDTO.class))).thenReturn(returnCustomerDTO);
+        this.mockMvc.perform(patch("/api/v1/customers/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(customerDTO) ))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id",is(1)))
+                .andExpect(jsonPath("$.lastName",is(LAST_NAME)))
+                .andExpect(jsonPath("$.firstName",is(FIRST_NAME)));
+
+        verify(this.customerService,times(1)).patchCustomer(anyLong(),any(CustomerDTO.class));
+    }
+
+    @Test
+    void patchNonExistingCustomer() throws Exception{
+        final String FIRST_NAME="Said";
+        CustomerDTO customerDTO= CustomerDTO.builder().firstName(FIRST_NAME).build();
+        when(this.customerService.patchCustomer(anyLong(),any(CustomerDTO.class))).thenReturn(null);
+        this.mockMvc.perform(patch("/api/v1/customers/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(customerDTO) ))
+                .andExpect(status().isNoContent());
+        verify(this.customerService,times(1)).patchCustomer(anyLong(),any(CustomerDTO.class));
+    }
 }

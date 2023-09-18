@@ -104,6 +104,7 @@ class CustomerServiceImpTest {
 
         CustomerDTO returnedDTO= this.customerService.updateCustomer(customerDTO.getId(),customerDTO);
 
+        assertNotNull(returnedDTO.getCustomerUrl());
         assertEquals(customerDTO.getId(),returnedDTO.getId());
         assertEquals(customerDTO.getFirstName(),returnedDTO.getFirstName());
         assertEquals(customerDTO.getLastName(),returnedDTO.getLastName());
@@ -128,5 +129,40 @@ class CustomerServiceImpTest {
         verify(this.customerRepository,times(1)).findById(anyLong());
         verify(this.customerRepository,times(0)).save(any(Customer.class));
 
+    }
+
+    @Test
+    void patchExistingCustomer(){
+        final String FIRST_NAME="Said";
+        Customer customer=Customer.builder().id(1l).firstName("Abderrahim").lastName("LAAKAB").build();
+        CustomerDTO customerDTOInput=CustomerDTO.builder().firstName(FIRST_NAME).build();
+        Customer resultCustomer=Customer.builder().id(1l).firstName(FIRST_NAME).lastName("LAAKAB").build();
+
+        when(this.environment.getProperty(anyString())).thenReturn("api/v1/customers/1");
+        when(this.customerRepository.findById(anyLong())).thenReturn(Optional.of(customer));
+        when(this.customerRepository.save(any())).thenReturn(customer);
+
+        CustomerDTO patchedCustomerDTO=this.customerService.patchCustomer(1l,customerDTOInput);
+        assertNotNull(patchedCustomerDTO.getCustomerUrl());
+        assertEquals(FIRST_NAME,patchedCustomerDTO.getFirstName());
+        assertEquals(customer.getId(),patchedCustomerDTO.getId());
+
+        verify(this.customerRepository,times(1)).findById(anyLong());
+        verify(this.customerRepository,times(1)).save(any());
+    }
+
+    @Test
+    void patchNonExistingCustomer(){
+        final String FIRST_NAME="Said";
+        Customer customer=Customer.builder().id(1l).firstName("Abderrahim").lastName("LAAKAB").build();
+        CustomerDTO customerDTOInput=CustomerDTO.builder().firstName(FIRST_NAME).build();
+
+        when(this.customerRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
+
+        CustomerDTO patchedCustomerDTO=this.customerService.patchCustomer(1l,customerDTOInput);
+        assertNull(patchedCustomerDTO);
+
+        verify(this.customerRepository,times(1)).findById(anyLong());
+        verify(this.customerRepository,times(0)).save(any());
     }
 }

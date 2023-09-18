@@ -49,8 +49,22 @@ public class CustomerServiceImp implements CustomerService{
         if(this.getCustomerById(customerDTO.getId())==null) return null;
         else  {
             Customer returnedCustomer=this.customerRepository.save(this.customerMapper.toCustomer(customerDTO));
-            return this.customerMapper.toCustomerDTO(returnedCustomer);
+            CustomerDTO returnDTO= this.customerMapper.toCustomerDTO(returnedCustomer);
+            returnDTO.setCustomerUrl(this.environment.getProperty("customer_root_path"));
+            return returnDTO;
         }
+
+    }
+
+    @Override
+    public CustomerDTO patchCustomer(Long id, CustomerDTO customerDTO) {
+        return this.customerRepository.findById(id).map(c -> {
+                if (customerDTO.getFirstName() != null) c.setFirstName(customerDTO.getFirstName());
+                if (customerDTO.getLastName() != null) c.setLastName(customerDTO.getLastName());
+                CustomerDTO returnDTO=this.customerMapper.toCustomerDTO(this.customerRepository.save(c));
+                returnDTO.setCustomerUrl(this.environment.getProperty("customer_root_path"));
+                return returnDTO;
+        }).orElse(null);
 
     }
 }
